@@ -9,13 +9,11 @@ const api = axios.create({
     }
 
 });
-const api_key = '2afd85bcb3aa680c60b1e37e32a5fee2'
-async function getTrendingMoviesPreview() {
-    const { data } = await api('trending/movie/day');
+const api_key = '2afd85bcb3aa680c60b1e37e32a5fee2';
 
-    const movies = data.results;
-    //para prevenir la recarga de los datos utilizamos:
-    trendingMoviesPreviewList.innerHTML = '';
+//helpers
+function moviesIteration(movies, PrincipalContainer) {
+    PrincipalContainer.innerHTML = '';
 
     movies.forEach(movie => {
         const movieContainer = document.createElement('div');
@@ -28,47 +26,13 @@ async function getTrendingMoviesPreview() {
             'src',
             `https://image.tmdb.org/t/p/w300/${movie.poster_path}`
         );
-
         movieContainer.appendChild(movieImg);
-        trendingMoviesPreviewList.appendChild(movieContainer)
-    });
-}
-async function getMoviesByCategories(id) {
-    const { data } = await api('discover/movie', {
-        params: {
-            with_genres: id
-        },
-    });
-
-    const movies = data.results;
-    //para prevenir la recarga de los datos utilizamos:
-    genericSection.innerHTML = '';
-    genericSection.scrollTop = 0;
-
-    movies.forEach(movie => {
-        const movieContainer = document.createElement('div');
-        movieContainer.classList.add('movie-container');
-
-
-        const movieImg = document.createElement('img');
-        movieImg.classList.add('movie-img');
-        movieImg.setAttribute('alt', movie.title);
-        movieImg.setAttribute(
-            'src',
-            `https://image.tmdb.org/t/p/w300/${movie.poster_path}`
-        );
-
-        movieContainer.appendChild(movieImg);
-        genericSection.appendChild(movieContainer)
-
+        PrincipalContainer.appendChild(movieContainer)
     });
 }
 
-async function getCategoriesPreview() {
-    const { data } = await api('genre/movie/list');
-    const categories = data.genres;
-
-    categoriesPreviewList.innerHTML = '';
+function categoriesIteration(categories, container) {
+    container.innerHTML = '';
 
     categories.forEach(category => {
         const categoryContainer = document.createElement('div');
@@ -84,8 +48,32 @@ async function getCategoriesPreview() {
 
         categoryTitle.appendChild(categoryTitleText);
         categoryContainer.appendChild(categoryTitle);
-        categoriesPreviewList.appendChild(categoryContainer);
+        container.appendChild(categoryContainer);
 
     });
+}
+//
+async function getTrendingMoviesPreview() {
+    const { data } = await api('trending/movie/day');
+    const movies = data.results;
+    moviesIteration(movies, trendingMoviesPreviewList)
+
+
+}
+async function getMoviesByCategories(id) {
+    const { data } = await api('discover/movie', {
+        params: {
+            with_genres: id
+        },
+    });
+    const movies = data.results;
+    moviesIteration(movies, genericSection)
+}
+
+async function getCategoriesPreview() {
+    const { data } = await api('genre/movie/list');
+    const categories = data.genres;
+
+    categoriesIteration(categories, categoriesPreviewList);
 }
 
