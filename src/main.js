@@ -14,7 +14,9 @@ async function getTrendingMoviesPreview() {
     const { data } = await api('trending/movie/day');
 
     const movies = data.results;
-    const trendingMoviePreviewContainer = document.querySelector('#trendingPreview .trendingPreview-movieList');
+    //para prevenir la recarga de los datos utilizamos:
+    trendingMoviesPreviewList.innerHTML = '';
+
     movies.forEach(movie => {
         const movieContainer = document.createElement('div');
         movieContainer.classList.add('movie-container');
@@ -28,31 +30,62 @@ async function getTrendingMoviesPreview() {
         );
 
         movieContainer.appendChild(movieImg);
-        trendingMoviePreviewContainer.appendChild(movieContainer)
+        trendingMoviesPreviewList.appendChild(movieContainer)
+    });
+}
+async function getMoviesByCategories(id) {
+    const { data } = await api('discover/movie', {
+        params: {
+            with_genres: id
+        },
+    });
+
+    const movies = data.results;
+    //para prevenir la recarga de los datos utilizamos:
+    genericSection.innerHTML = '';
+    genericSection.scrollTop = 0;
+
+    movies.forEach(movie => {
+        const movieContainer = document.createElement('div');
+        movieContainer.classList.add('movie-container');
+
+
+        const movieImg = document.createElement('img');
+        movieImg.classList.add('movie-img');
+        movieImg.setAttribute('alt', movie.title);
+        movieImg.setAttribute(
+            'src',
+            `https://image.tmdb.org/t/p/w300/${movie.poster_path}`
+        );
+
+        movieContainer.appendChild(movieImg);
+        genericSection.appendChild(movieContainer)
+
     });
 }
 
 async function getCategoriesPreview() {
     const { data } = await api('genre/movie/list');
-
     const categories = data.genres;
-    categories.forEach(category => {
-        const PreviewCategoriesContainer = document.querySelector('#categoriesPreview .categoriesPreview-list');
 
+    categoriesPreviewList.innerHTML = '';
+
+    categories.forEach(category => {
         const categoryContainer = document.createElement('div');
         categoryContainer.classList.add('category-container');
 
         const categoryTitle = document.createElement('h3');
         categoryTitle.classList.add('category-title');
         categoryTitle.setAttribute('id', 'id' + category.id);
+        categoryTitle.addEventListener('click', () => [
+            location.hash = `#category=${category.id}-${category.name}`
+        ])
         const categoryTitleText = document.createTextNode(category.name)
 
         categoryTitle.appendChild(categoryTitleText);
         categoryContainer.appendChild(categoryTitle);
-        PreviewCategoriesContainer.appendChild(categoryContainer);
+        categoriesPreviewList.appendChild(categoryContainer);
 
     });
 }
 
-getTrendingMoviesPreview()
-getCategoriesPreview()
