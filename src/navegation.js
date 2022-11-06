@@ -1,5 +1,5 @@
 searchFormBtn.addEventListener('click', () => {
-    location.hash = '#search='
+    location.hash = `#search=${searchFormInput.value}`
 });
 trendingBtn.addEventListener('click', () => {
     location.hash = '#trends='
@@ -52,14 +52,18 @@ function SearchPage() {
     headerSection.style.background = '';
     arrowBtn.classList.remove('inactive');
     arrowBtn.classList.remove('header-arrow--white');
-    headerCategoryTitle.classList.remove('inactive');
+    headerCategoryTitle.classList.add('inactive');
     headerTitle.classList.add('inactive');
-    searchForm.classList.add('inactive');
+    searchForm.classList.remove('inactive');
 
     trendingPreviewSection.classList.add('inactive');
     categoriesPreviewSection.classList.add('inactive');
     genericSection.classList.remove('inactive');
     movieDetailSection.classList.add('inactive');
+
+    //['#search=','buscado']
+    const [_, query] = location.hash.split('=');
+    getMoviesBySearch(query);
 }
 function movieDetailsPage() {
     console.log('Movie')

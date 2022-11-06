@@ -69,6 +69,15 @@ async function getMoviesByCategories(id) {
     const movies = data.results;
     moviesIteration(movies, genericSection)
 }
+async function getMoviesBySearch(query) {
+    const { data } = await api('search/movie', {
+        params: {
+            query,
+        },
+    });
+    const movies = data.results;
+    moviesIteration(movies, genericSection);
+}
 
 async function getCategoriesPreview() {
     const { data } = await api('genre/movie/list');
