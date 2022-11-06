@@ -428,3 +428,18 @@ footer {
 .inactive {
     display: none;
 }
+
+@media (min-width: 800px) {
+    .category-container {
+        width: 15%;
+    }
+
+    .header-searchForm {
+        width: 40%;
+        margin: 0 auto;
+    }
+
+    .genericList-container .movie-container {
+        width: 19.5%;
+    }
+}
