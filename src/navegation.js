@@ -84,6 +84,10 @@ function movieDetailsPage() {
     categoriesPreviewSection.classList.add('inactive');
     genericSection.classList.add('inactive');
     movieDetailSection.classList.remove('inactive');
+
+    //['#movie=','idMovie']
+    const [_, movieId] = location.hash.split('=');
+    getMoviebyId(movieId);
 }
 function categoryPage() {
     console.log('Cateories')

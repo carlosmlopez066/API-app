@@ -18,6 +18,9 @@ function moviesIteration(movies, PrincipalContainer) {
     movies.forEach(movie => {
         const movieContainer = document.createElement('div');
         movieContainer.classList.add('movie-container');
+        movieContainer.addEventListener('click', () => {
+            location.hash = `#movie=${movie.id}`
+        });
 
         const movieImg = document.createElement('img');
         movieImg.classList.add('movie-img');
@@ -92,5 +95,23 @@ async function getTrendingMovies() {
     moviesIteration(movies, genericSection)
 
 
+}
+async function getMoviebyId(idMovie) {
+    const { data: movie } = await api(`movie/${idMovie}`);
+    const moviePoster = `https://image.tmdb.org/t/p/w500/${movie.poster_path}`
+    headerSection.style.background = `
+        linear-gradient(
+            180deg, 
+            rgba(0, 0, 0, 0.35) 19.27%, 
+            rgba(0, 0, 0, 0) 29.17%
+            ),
+        url(${moviePoster})
+    `;
+
+    movieDetailTitle.textContent = movie.title;
+    movieDetailDescription.textContent = movie.overview;
+    movieDetailScore.textContent = movie.vote_average;
+
+    categoriesIteration(movie.genres, movieDetailCategoriesList);
 }
 
