@@ -5,7 +5,8 @@ trendingBtn.addEventListener('click', () => {
     location.hash = '#trends='
 });
 arrowBtn.addEventListener('click', () => {
-    location.hash = '#home'
+    history.back();
+    //location.hash = '#home'
 });
 
 window.addEventListener('DOMContentLoaded', navegator, false);
@@ -44,6 +45,9 @@ function trendsPage() {
     categoriesPreviewSection.classList.add('inactive');
     genericSection.classList.remove('inactive');
     movieDetailSection.classList.add('inactive');
+    getTrendingMovies();
+    headerCategoryTitle.innerHTML = 'Trending';
+
 }
 function SearchPage() {
     console.log('SEARCH')

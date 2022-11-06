@@ -86,3 +86,11 @@ async function getCategoriesPreview() {
     categoriesIteration(categories, categoriesPreviewList);
 }
 
+async function getTrendingMovies() {
+    const { data } = await api('trending/movie/day');
+    const movies = data.results;
+    moviesIteration(movies, genericSection)
+
+
+}
+
