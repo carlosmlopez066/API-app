@@ -24,8 +24,17 @@ const lazyLoader = new IntersectionObserver((entries) => {
     });
 });
 
-function moviesIteration(movies, PrincipalContainer, lazyLoad = false) {
-    PrincipalContainer.innerHTML = '';
+function moviesIteration(
+    movies,
+    PrincipalContainer,
+    {
+        lazyLoad = false,
+        clean = true
+    } = {},
+) {
+    if (clean) {
+        PrincipalContainer.innerHTML = '';
+    }
 
     movies.forEach(movie => {
         const movieContainer = document.createElement('div');
@@ -41,6 +50,12 @@ function moviesIteration(movies, PrincipalContainer, lazyLoad = false) {
             lazyLoad ? 'data-img' : 'src',
             `https://image.tmdb.org/t/p/w300/${movie.poster_path}`
         );
+
+        movieImg.addEventListener('error', () => {
+            movieImg.setAttribute(
+                'src',
+                'https://www.ensalza.com/blog/wp-content/uploads/error-500.jpg')
+        })
 
         if (lazyLoad) {
             lazyLoader.observe(movieImg)
@@ -72,7 +87,7 @@ function categoriesIteration(categories, container) {
 
     });
 }
-//
+//llamados a la api
 async function getTrendingMoviesPreview() {
     const { data } = await api('trending/movie/day');
     const movies = data.results;
@@ -96,7 +111,7 @@ async function getMoviesBySearch(query) {
         },
     });
     const movies = data.results;
-    moviesIteration(movies, genericSection);
+    moviesIteration(movies, genericSection, true);
 }
 
 async function getCategoriesPreview() {
@@ -109,9 +124,47 @@ async function getCategoriesPreview() {
 async function getTrendingMovies() {
     const { data } = await api('trending/movie/day');
     const movies = data.results;
-    moviesIteration(movies, genericSection)
+    moviesIteration(movies, genericSection, { lazyLoad: true, clean: true });
 
+    // const btnLoadMore = document.createElement('button');
+    // btnLoadMore.innerText = 'load more';
+    // btnLoadMore.addEventListener('click', getPaginationTrendingMovies)
+    // genericSection.appendChild(btnLoadMore)
 
+}
+
+// let page = 1;
+// window.addEventListener('scroll', getPaginationTrendingMovies);
+async function getPaginationTrendingMovies() {
+    const {
+        scrollTop,
+        scrollHeight,
+        clientHeight
+    } = document.documentElement;
+
+    const scrollIsBottom = (scrollTop + clientHeight) >= scrollHeight - 15;
+    if (scrollIsBottom) {
+        page++;
+        const { data } = await api('trending/movie/day', {
+            params: {
+                page,
+            }
+        });
+        const movies = data.results;
+
+        moviesIteration(
+            movies,
+            genericSection,
+            {
+                lazyLoad: true,
+                clean: false
+            });
+        // const btnLoadMore = document.createElement('button');
+        // btnLoadMore.innerText = 'load more';
+        // btnLoadMore.addEventListener('click', getPaginationTrendingMovies)
+        // genericSection.appendChild(btnLoadMore)
+
+    }
 }
 async function getMoviebyId(idMovie) {
     const { data: movie } = await api(`movie/${idMovie}`);
@@ -137,6 +190,6 @@ async function getRelatedMoviesID(idMovie) {
     const { data } = await api(`movie/${idMovie}/recommendations`);
     const relatedMovies = data.results;
 
-    moviesIteration(relatedMovies, relatedMoviesContainer);
+    moviesIteration(relatedMovies, relatedMoviesContainer, true);
 }
 
