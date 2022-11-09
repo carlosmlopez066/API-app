@@ -1,3 +1,4 @@
+let maxPage;
 let page = 1;
 let infiniteScroll;
 searchFormBtn.addEventListener('click', () => {
@@ -81,6 +82,9 @@ function SearchPage() {
     //['#search=','buscado']
     const [_, query] = location.hash.split('=');
     getMoviesBySearch(query);
+
+    infiniteScroll = getPaginationMoviesBySearch(query);
+
 }
 function movieDetailsPage() {
     console.log('Movie')
@@ -123,6 +127,8 @@ function categoryPage() {
 
     getMoviesByCategories(categoryId);
     headerCategoryTitle.innerHTML = categoryName;
+
+    infiniteScroll = getPaginationMoviesByCategories(categoryId);
 }
 function homePage() {
     console.log('Home');

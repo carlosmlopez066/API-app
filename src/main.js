@@ -101,8 +101,39 @@ async function getMoviesByCategories(id) {
             with_genres: id
         },
     });
+    maxPage = data.total_pages;
     const movies = data.results;
-    moviesIteration(movies, genericSection)
+    moviesIteration(movies, genericSection, { lazyLoad: true })
+}
+function getPaginationMoviesByCategories(id) {
+    return async function () {
+        const {
+            scrollTop,
+            scrollHeight,
+            clientHeight
+        } = document.documentElement;
+
+        const scrollIsBottom = (scrollTop + clientHeight) >= scrollHeight - 15;
+        const pageNotMax = page < maxPage;
+        if (scrollIsBottom && pageNotMax) {
+            page++;
+            const { data } = await api('discover/movie', {
+                params: {
+                    with_genres: id,
+                    page,
+                },
+            });
+            const movies = data.results;
+            moviesIteration(
+                movies,
+                genericSection,
+                {
+                    lazyLoad: true,
+                    clean: false
+                });
+
+        }
+    }
 }
 async function getMoviesBySearch(query) {
     const { data } = await api('search/movie', {
@@ -110,8 +141,41 @@ async function getMoviesBySearch(query) {
             query,
         },
     });
+    maxPage = data.total_pages;
+    console.log(maxPage)
+
     const movies = data.results;
-    moviesIteration(movies, genericSection, true);
+    moviesIteration(movies, genericSection);
+}
+function getPaginationMoviesBySearch(query) {
+    return async function () {
+        const {
+            scrollTop,
+            scrollHeight,
+            clientHeight
+        } = document.documentElement;
+
+        const scrollIsBottom = (scrollTop + clientHeight) >= scrollHeight - 15;
+        const pageNotMax = page < maxPage;
+        if (scrollIsBottom && pageNotMax) {
+            page++;
+            const { data } = await api('search/movie', {
+                params: {
+                    query,
+                    page,
+                },
+            });
+            const movies = data.results;
+            moviesIteration(
+                movies,
+                genericSection,
+                {
+                    lazyLoad: true,
+                    clean: false
+                });
+
+        }
+    }
 }
 
 async function getCategoriesPreview() {
@@ -124,6 +188,7 @@ async function getCategoriesPreview() {
 async function getTrendingMovies() {
     const { data } = await api('trending/movie/day');
     const movies = data.results;
+    maxPage = data.total_pages;
     moviesIteration(movies, genericSection, { lazyLoad: true, clean: true });
 
     // const btnLoadMore = document.createElement('button');
@@ -143,7 +208,8 @@ async function getPaginationTrendingMovies() {
     } = document.documentElement;
 
     const scrollIsBottom = (scrollTop + clientHeight) >= scrollHeight - 15;
-    if (scrollIsBottom) {
+    const pageNotMax = page < maxPage;
+    if (scrollIsBottom && pageNotMax) {
         page++;
         const { data } = await api('trending/movie/day', {
             params: {
