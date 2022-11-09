@@ -6,8 +6,10 @@ const api = axios.create({
         'Content-Type': 'application/json;charset=utf-8'
     },
     params: {
-        'api_key': '2afd85bcb3aa680c60b1e37e32a5fee2'
-    }
+        'api_key': '2afd85bcb3aa680c60b1e37e32a5fee2',
+        'language': 'es-Es'
+    },
+
 });
 
 function likedMovieList() {
@@ -25,7 +27,7 @@ function likedMovieList() {
 function likeMovie(movie) {
     const likedMovies = likedMovieList();
 
-    console.log(likedMovies);
+
 
     if (likedMovies[movie.id]) {
         likedMovies[movie.id] = undefined;
@@ -129,7 +131,7 @@ function categoriesIteration(categories, container) {
 async function getTrendingMoviesPreview() {
     const { data } = await api('trending/movie/day');
     const movies = data.results;
-    moviesIteration(movies, trendingMoviesPreviewList, true)
+    moviesIteration(movies, trendingMoviesPreviewList, { lazyLoad: true, clean: true })
 
 
 }
@@ -180,7 +182,7 @@ async function getMoviesBySearch(query) {
         },
     });
     maxPage = data.total_pages;
-    console.log(maxPage)
+
 
     const movies = data.results;
     moviesIteration(movies, genericSection);
@@ -294,7 +296,7 @@ async function getRelatedMoviesID(idMovie) {
     const { data } = await api(`movie/${idMovie}/recommendations`);
     const relatedMovies = data.results;
 
-    moviesIteration(relatedMovies, relatedMoviesContainer, true);
+    moviesIteration(relatedMovies, relatedMoviesContainer, { lazyLoad: true, clean: true, });
 }
 
 function getLikedMovies() {

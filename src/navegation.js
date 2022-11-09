@@ -17,7 +17,6 @@ window.addEventListener('hashchange', navegatorByHash, false);
 window.addEventListener('scroll', infiniteScroll, false);
 
 function navegatorByHash() {
-    console.log({ location });
     if (infiniteScroll) {
         window.removeEventListener('scroll', infiniteScroll, { passive: false });
         infiniteScroll = undefined;
@@ -44,7 +43,6 @@ function navegatorByHash() {
 }
 
 function trendsPage() {
-    console.log('TRENDS')
     headerSection.classList.remove('header-container--long');
     headerSection.style.background = '';
     arrowBtn.classList.remove('inactive');
@@ -65,7 +63,6 @@ function trendsPage() {
 
 }
 function SearchPage() {
-    console.log('SEARCH')
 
     headerSection.classList.remove('header-container--long');
     headerSection.style.background = '';
@@ -89,7 +86,6 @@ function SearchPage() {
 
 }
 function movieDetailsPage() {
-    console.log('Movie')
 
     headerSection.classList.add('header-container--long');
     // headerSection.style.background = '';
@@ -110,7 +106,6 @@ function movieDetailsPage() {
     getMoviebyId(movieId);
 }
 function categoryPage() {
-    console.log('Cateories')
 
     headerSection.classList.remove('header-container--long');
     headerSection.style.background = '';
@@ -136,7 +131,6 @@ function categoryPage() {
     infiniteScroll = getPaginationMoviesByCategories(categoryId);
 }
 function homePage() {
-    console.log('Home');
 
     headerSection.classList.remove('header-container--long');
     headerSection.style.background = '';
