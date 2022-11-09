@@ -1,4 +1,5 @@
 
+//Data y localStorage
 const api = axios.create({
     baseURL: 'https://api.themoviedb.org/3/',
     Headers: {
@@ -7,9 +8,35 @@ const api = axios.create({
     params: {
         'api_key': '2afd85bcb3aa680c60b1e37e32a5fee2'
     }
-
 });
-const api_key = '2afd85bcb3aa680c60b1e37e32a5fee2';
+
+function likedMovieList() {
+    const item = JSON.parse(localStorage.getItem('liked_movies'));
+    let movies;
+
+    if (item) {
+        movies = item;
+    } else {
+        movies = {};
+    }
+    return movies;
+}
+
+function likeMovie(movie) {
+    const likedMovies = likedMovieList();
+
+    console.log(likedMovies);
+
+    if (likedMovies[movie.id]) {
+        likedMovies[movie.id] = undefined;
+    } else {
+        likedMovies[movie.id] = movie;
+    }
+
+    localStorage.setItem('liked_movies', JSON.stringify(likedMovies));
+    getTrendingMoviesPreview();
+    getLikedMovies();
+}
 
 //helpers
 
@@ -39,9 +66,6 @@ function moviesIteration(
     movies.forEach(movie => {
         const movieContainer = document.createElement('div');
         movieContainer.classList.add('movie-container');
-        movieContainer.addEventListener('click', () => {
-            location.hash = `#movie=${movie.id}`
-        });
 
         const movieImg = document.createElement('img');
         movieImg.classList.add('movie-img');
@@ -50,6 +74,10 @@ function moviesIteration(
             lazyLoad ? 'data-img' : 'src',
             `https://image.tmdb.org/t/p/w300/${movie.poster_path}`
         );
+        movieImg.addEventListener('click', () => {
+            location.hash = `#movie=${movie.id}`
+        });
+
 
         movieImg.addEventListener('error', () => {
             movieImg.setAttribute(
@@ -57,11 +85,21 @@ function moviesIteration(
                 'https://www.ensalza.com/blog/wp-content/uploads/error-500.jpg')
         })
 
+        const movieBtn = document.createElement('button');
+        movieBtn.classList.add('movie-btn');
+        likedMovieList()[movie.id] && movieBtn.classList.add('movie-btn--liked');
+        movieBtn.addEventListener('click', () => {
+            movieBtn.classList.toggle('movie-btn--liked')
+            likeMovie(movie);
+            // getLikedMovies()
+        })
+
         if (lazyLoad) {
             lazyLoader.observe(movieImg)
         }
 
         movieContainer.appendChild(movieImg);
+        movieContainer.appendChild(movieBtn);
         PrincipalContainer.appendChild(movieContainer)
     });
 }
@@ -259,3 +297,11 @@ async function getRelatedMoviesID(idMovie) {
     moviesIteration(relatedMovies, relatedMoviesContainer, true);
 }
 
+function getLikedMovies() {
+    const likedMovies = likedMovieList();
+    //{ keys: 'values', keys: 'values, }
+    //['value', 'value2']
+    const movieArray = Object.values(likedMovies);
+
+    moviesIteration(movieArray, likedMoviesListArticle, { lazyLoad: true, clean: true, });
+}
